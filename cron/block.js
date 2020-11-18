@@ -117,7 +117,6 @@ async function update() {
     }
     // If nothing to do then exit.
     if (dbHeight >= rpcHeight) {
-      log(`DB Height: ${ dbHeight } > Daemon Height: ${ rpcHeight }. Flush db or wait for daemon to sync.`);
       return;
     }
     // If starting from genesis skip.
