@@ -5,6 +5,7 @@ sudo apt-get update
 
 #install redis-server
 sudo apt-get install redis-server -y
+sudo service redis-server start
 
 #install mongo
 curl -fsSL https://www.mongodb.org/static/pgp/server-4.4.asc | sudo apt-key add -
@@ -12,11 +13,11 @@ echo "deb [ arch=amd64,arm64 ] https://repo.mongodb.org/apt/ubuntu bionic/mongod
 sudo apt-get update
 sudo apt-get install mongodb-org -y
 sudo systemctl start mongod.service
-sudo systemctl status mongod
-sudo systemctl enable mongod
 chown -R mongodb:mongodb /var/lib/mongodb
 chown mongodb:mongodb /tmp/mongodb-27017.sock
 sudo service mongod restart
+sudo systemctl status mongod
+sudo systemctl enable mongod
 
 #create mongo database for explorer.
 mongo <<EOF
@@ -88,12 +89,12 @@ wagerrd -daemon
 
 #install explorer
 
-apt-get install -y cron bash curl nodejs npm git
+apt-get install -y cron bash curl nodejs git
 
 git clone https://github.com/frndxyz/wagerr-explorer.git
 
 cd wagerr-explorer
-git checkout '$GIT_BRANCH'
+git checkout $GIT_BRANCH
 
 cat > ./config.js <<EOL
 const config = {
@@ -147,9 +148,8 @@ EOL
 npm install -g yarn
 yarn install
 yarn run build 
-yarn run start:api 
-yarn run start:web
 
+#install crontab
 crontab crontab.txt
 
 #setup nginx
@@ -168,13 +168,16 @@ server {
     location / {
         proxy_pass http://0.0.0.0:8087;
         proxy_http_version 1.1;
-        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Upgrade \$http_upgrade;
         proxy_set_header Connection 'upgrade';
-        proxy_set_header Host $host;
-        proxy_cache_bypass $http_upgrade;
+        proxy_set_header Host \$host;
+        proxy_cache_bypass \$http_upgrade;
         }
 }
 EOL
 
 sudo ln -s /etc/nginx/sites-available/wagerr_explorer /etc/nginx/sites-enabled/
 sudo systemctl restart nginx
+
+yarn run start:api 
+yarn run start:web
