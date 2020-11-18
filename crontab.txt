@@ -1,0 +1,9 @@
+*/1 * * * * cd ~/wagerr-explorer && ./cron/cron_block.sh >> ./tmp/block.log 2>&1
+*/1 * * * * cd ~/wagerr-explorer && /usr/bin/node ./cron/masternode.js >> ./tmp/masternode.log 2>&1
+*/5 * * * * cd ~/wagerr-explorer && /usr/bin/node ./cron/peer.js >> ./tmp/peer.log 2>&1
+*/1 * * * * cd ~/wagerr-explorer && /usr/bin/node ./cron/rich.js >> ./tmp/rich.log 2>&1
+*/5 * * * * cd ~/wagerr-explorer && /usr/bin/node ./cron/coin.js >> ./tmp/coin.log 2>&1
+*/1 * * * * cd ~/wagerr-explorer && /usr/bin/node ./cron/listevent.js >> ./tmp/listevent.log 2>&1
+*/5 * * * * cd ~/wagerr-explorer && /usr/bin/node ./cron/bet.js >> ./tmp/bet.log 2>&1
+*/10 * * * * cd ~/wagerr-explorer && /usr/bin/node ./cron/proposal.js >> ./tmp/proposal.log 2>&1
+
