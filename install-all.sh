@@ -151,3 +151,30 @@ yarn run start:api
 yarn run start:web
 
 crontab crontab.txt
+
+#setup nginx
+sudo apt install nginx
+
+cat > /etc/nginx/sites-available/wagerr_explorer <<EOL 
+server {
+
+    server_name 95.217.8.192;
+    listen 80;
+    listen [::]:80;
+
+    location ~ /.well-known {
+                allow all;
+        }
+    location / {
+        proxy_pass http://0.0.0.0:8087;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_cache_bypass $http_upgrade;
+        }
+}
+EOL
+
+sudo ln -s /etc/nginx/sites-available/wagerr_explorer /etc/nginx/sites-enabled/
+sudo systemctl restart nginx
