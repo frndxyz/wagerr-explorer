@@ -13,13 +13,26 @@ class BettingMobileMenu extends Component {
     onSearch: PropTypes.func.isRequired
   };
 
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      sports: []
+    }
+  }
+
+  componentDidMount() {
+    bettingMenuData().then((sports) => {
+      this.setState({ sports: sports })
+    })
+
+  }
+
   render() {
-    const { t } = this.props;
-    const menuData = bettingMenuData(t)
     return (
       <div className='menu-explorer'>
         {
-          menuData.map((i, index) =>
+          this.state.sports.map((i, index) =>
             <div
               className='menu-explorer__item'
               key={index}

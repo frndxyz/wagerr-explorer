@@ -30,6 +30,7 @@ import CardBlackTable from "../component/Card/CardBlackTable";
 import ExplorerOverviewMenu from "../component/Menu/ExplorerOverviewMenu";
 import GlobalSwitch from "../component/Menu/GlobalSwitch";
 import Utils from "../core/utils";
+import ClientUtils from '../component/utils/utils';
 import Sliding from '../component/Sliding'
 import Switch from "react-switch";
 
@@ -44,25 +45,6 @@ Number.prototype.toFixedNoRounding = function(n) {
     return b > 0 ? (a + "0".repeat(b)) : a;
 }
 
-const convertToOdds = (odds, is_American, is_Decimal) => {
-    let ret = odds;
-    if (is_American){
-      odds = parseFloat(odds);
-      ret = parseInt((odds - 1) * 100);
-  
-      if (odds < 2)
-        ret = Math.round((-100) / (odds - 1));
-  
-      if (odds == 0) ret = 0;
-    }
-  
-    if (is_Decimal){
-      ret = ret == 0 ? ret : (1 + (ret - 1) * 0.94).toFixedNoRounding(2);
-    }
-    
-    if (ret > 0 && is_American) ret = `+${ret}`
-    return ret;
-}
 
 class BetEventList extends Component {
     static defaultProps = {
@@ -370,12 +352,6 @@ class BetEventList extends Component {
                                         className={'table-responsive table--for-betevents'}
                                         cols={cols}
                                         data={this.state.events.map((event) => {
-                                            const displayNum = (num, divider) => {
-                                                const value = num > 0 ? `+${num / divider}` : `${num / divider}`;
-                                                
-                                                return value;
-                                              };
-
                                               
                                             const betAmount = event.actions.reduce((acc, action) => {
                                                 return acc + action.betValue
@@ -438,9 +414,9 @@ class BetEventList extends Component {
                                             let origdrawOdds = (event.events[0].drawOdds / 10000)
                                             let origawayOdds = (event.events[0].awayOdds / 10000)
 
-                                            homeOdds = convertToOdds(homeOdds, toggleSwitchOddsStyle, toggleSwitchOdds);
-                                            drawOdds = convertToOdds(drawOdds, toggleSwitchOddsStyle, toggleSwitchOdds);
-                                            awayOdds = convertToOdds(awayOdds, toggleSwitchOddsStyle, toggleSwitchOdds);
+                                            homeOdds = ClientUtils.convertToOdds(homeOdds, toggleSwitchOddsStyle, toggleSwitchOdds);
+                                            drawOdds = ClientUtils.convertToOdds(drawOdds, toggleSwitchOddsStyle, toggleSwitchOdds);
+                                            awayOdds = ClientUtils.convertToOdds(awayOdds, toggleSwitchOddsStyle, toggleSwitchOdds);
                                         
                                             if (event.events.length > 1) {
                                                 let lastHomeOdds = (event.events[1].homeOdds / 10000)
@@ -469,13 +445,13 @@ class BetEventList extends Component {
                                             let spreadAwayOdd = '';
                                             const eventItem = event.events[0];
                                             if (eventItem.latest_spread){
-                                                spreadHomePoint = `${displayNum(eventItem.latest_spread.homePoints, 10)}`;
-                                                spreadAwayPoint = `${displayNum(eventItem.latest_spread.awayPoints, 10)}`;
+                                                spreadHomePoint = `${ ClientUtils.displayNum(eventItem.latest_spread.homePoints, 10)}`;
+                                                spreadAwayPoint = `${ClientUtils.displayNum(eventItem.latest_spread.awayPoints, 10)}`;
                                                 let homeOddstmp =  eventItem.latest_spread.homeOdds / 10000                
                                                 let awayOddstmp = eventItem.latest_spread.awayOdds / 10000
                                 
-                                                spreadHomeOdd = convertToOdds(homeOddstmp, toggleSwitchOddsStyle, toggleSwitchOdds);                
-                                                spreadAwayOdd = convertToOdds(awayOddstmp, toggleSwitchOddsStyle, toggleSwitchOdds);                                                
+                                                spreadHomeOdd = ClientUtils.convertToOdds(homeOddstmp, toggleSwitchOddsStyle, toggleSwitchOdds);                
+                                                spreadAwayOdd = ClientUtils.convertToOdds(awayOddstmp, toggleSwitchOddsStyle, toggleSwitchOdds);                                                
                                             }
                                             
                                             let totalPoint = ''
@@ -486,8 +462,8 @@ class BetEventList extends Component {
                                                 let overOddstmp =  eventItem.latest_total.overOdds / 10000                
                                                 let underOddstmp = eventItem.latest_total.underOdds / 10000
                                                 totalPoint = eventItem.latest_total.points / 10
-                                                underOdd = convertToOdds(underOddstmp, toggleSwitchOddsStyle, toggleSwitchOdds);
-                                                overOdd = convertToOdds(overOddstmp, toggleSwitchOddsStyle, toggleSwitchOdds);
+                                                underOdd = ClientUtils.convertToOdds(underOddstmp, toggleSwitchOddsStyle, toggleSwitchOdds);
+                                                overOdd = ClientUtils.convertToOdds(overOddstmp, toggleSwitchOddsStyle, toggleSwitchOdds);
                                             }
 
                                             let homeTeam = eventItem.homeTeam ? eventItem.homeTeam : "";
