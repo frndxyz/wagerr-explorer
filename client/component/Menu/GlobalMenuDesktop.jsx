@@ -2,10 +2,16 @@
 import Component from 'core/Component';
 import PropTypes from 'prop-types';
 import React from 'react';
+import Client from '@wagerr-wdk/client';
+import utils from '../utils/utils';
+import InjectedProvider from '@wagerr-wdk/injected-provider';
 import { Link } from 'react-router-dom';
 import SearchBar from '../SearchBar';
 
 export default class  GlobalMenuDesktop extends Component {
+
+  wgrClient = new Client();
+  
   static propTypes = {
     links: PropTypes.array
   };
@@ -18,7 +24,41 @@ export default class  GlobalMenuDesktop extends Component {
     super(props);
     this.state = {
       isOpen: true,
+      walletConnected: false,
+      walletBalance: 0
     }
+
+  }
+
+
+
+  connectWallet = () => {
+    if (!window.providerManager) console.log("no wallet provider found")
+    this.wgrClient.addProvider(new InjectedProvider(window.providerManager.getProviderFor('WGR')));
+    window.providerManager.enable().then((res)=>  {
+      if(res == true) {
+      this.setState({walletConnected: true});
+      this.updateWalletBalance();
+      }
+      
+    }).catch((e) => {
+      this.setState({walletConnected: false});
+      console.log('error connecting wallet:',e)
+    })
+  }
+
+  updateWalletBalance = () => {
+    this.wgrClient.wallet.getUsedAddresses().then((resAddrs) => {
+        this.wgrClient.chain.getBalance(resAddrs).then((resBalance) => {
+          
+          this.setState({walletBalance: utils.prettyBalance(resBalance)})
+        //if(!resBalance.data['result']) return ;
+        
+      })
+    
+    }).catch(e => {
+      console.log('error getting wallet balance:',e)
+    })
   }
 
   getLinks = () => {
@@ -94,13 +134,20 @@ export default class  GlobalMenuDesktop extends Component {
               </div>
               
               <div className="global-menu-desktop_wallet_setion">
-                <div className="global-menu-desktop_wallet_connection">
-                  <span className="global-menu-desktop_wallet_balance">0 WGR</span>
+                <div className="global-menu-desktop_wallet_connection text-center">
+                { this.state.walletConnected ? <div>  <span className="global-menu-desktop_wallet_balance">{this.state.walletBalance} WGR</span>
                   <div className="global-menu-desktop_wallet_connection_status">
                     <div className="wallet_connection_status_mark"></div>
-                    <span className="wallet_connection_status_text">Wallet Disconnected</span>
+                    <span className= "wallet_connection_status_text">Wallet Connected</span>
                   </div>
+                  </div>
+                
+                : <div className="global-menu-desktop_wallet_connection_status">
+                  <button className="wallet_connection_button" onClick={this.connectWallet}>Connect Wallet</button>
                 </div>
+               
+                }
+               </div>
               </div>
             </div>
           </div>
