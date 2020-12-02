@@ -31,12 +31,12 @@ const prodPlugins = [
     algorithm: 'gzip',
     asset: '[path].gz[query]'
   }),
-  new webpack.optimize.UglifyJsPlugin({
-    compress: { warnings: false },
-    comments: false,
-    sourceMap: true,
-    minimize: false
-  })
+  // new webpack.optimize.UglifyJsPlugin({
+  //   compress: { warnings: false },
+  //   comments: false,
+  //   sourceMap: true,
+  //   minimize: false
+  // })
 ];
 
 const envPlugins = process.env.NODE_ENV === 'production'

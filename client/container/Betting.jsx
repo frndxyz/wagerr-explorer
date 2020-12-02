@@ -11,7 +11,8 @@ import Card from '../component/Card';
 import BettingMenuDesktop from '../component/Menu/BettingMenuDesktop';
 import CardBettingTable from '../component/Card/CardBettingTable';
 import BettingMobileMenu from '../component/Menu/BettingMobileMenu';
-
+import BettingSingle from '../component/BettingSingle';
+import BettingParlay from '../component/BettingParlay';
 class Betting extends Component {
  
   static propTypes = {
@@ -166,13 +167,23 @@ class Betting extends Component {
               </div>
             </div>
             <div className="col-lg-3 col-md-12">
-              <div className='bet-black-card'>
-                <div className='bet-black-card__title'>BET SLIP</div>
-                <div className='bet-black-card__body'>
-                  <div>Your bet slip is empty.</div>
-                  <div className='mt-12'>Please make one or more selections in order to place bets.</div>
+            <div className="bet-select">
+                    <label className="radio-container">Single
+                        <input type="radio" name="bet" value="Single"checked/>
+                        <span className="checkmark"></span>
+                    </label>
+                    <label className="radio-container">Parlay
+                    <input type="radio" name="bet" value="Parlay"/>
+                    <span className="checkmark"></span>
+                    </label>
+                    <button id="clearSlip" className="btn-clear-slip">CLEAR SLIP</button>
                 </div>
-              </div>
+               
+                <BettingSingle/>
+               {/* <BettingParlay /> */}
+                 
+              
+
             </div>
           </div>
         </div>
